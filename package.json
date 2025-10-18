@@ -1,0 +1,39 @@
+{
+  "name": "womba-cli",
+  "version": "1.0.0",
+  "description": "Node.js client for Womba AI test generation service",
+  "main": "index.js",
+  "bin": {
+    "womba": "./index.js"
+  },
+  "scripts": {
+    "test": "jest",
+    "start": "node index.js"
+  },
+  "keywords": [
+    "womba",
+    "testing",
+    "ai",
+    "jira",
+    "zephyr",
+    "test-automation"
+  ],
+  "author": "Womba",
+  "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/jtizdev/womba-node.git"
+  },
+  "dependencies": {
+    "axios": "^1.6.5",
+    "chalk": "^4.1.2",
+    "commander": "^11.1.0"
+  },
+  "devDependencies": {
+    "jest": "^29.7.0"
+  },
+  "engines": {
+    "node": ">=14.0.0"
+  }
+}
+

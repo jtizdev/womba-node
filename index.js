@@ -65,14 +65,22 @@ async function handleGenerate(storyKey, upload) {
   const result = await client.generateTests(storyKey, upload);
 
   // Print results
-  console.log(chalk.green(`\n✅ Successfully generated ${result.test_cases.length} test cases!`));
-  console.log(chalk.cyan(`📊 Quality Score: ${result.quality_score.toFixed(1)}/100`));
-  console.log(chalk.cyan(`📁 Suggested Folder: ${result.suggested_folder}`));
-  console.log(chalk.cyan(`⏱️  Execution Time: ${result.execution_time_seconds.toFixed(2)}s`));
-
-  if (result.metadata) {
-    if (result.metadata.ai_model) {
-      console.log(chalk.cyan(`🤖 AI Model: ${result.metadata.ai_model}`));
+  const resultStoryKey = result.test_plan.story?.key || 'N/A';
+  console.log(chalk.green(`\n✅ Successfully generated ${result.test_plan.test_cases.length} test cases for ${resultStoryKey}!`));
+  
+  if (result.test_plan.metadata) {
+    if (result.test_plan.metadata.quality_score !== undefined) {
+      console.log(chalk.cyan(`📊 Quality Score: ${result.test_plan.metadata.quality_score.toFixed(1)}/100`));
+    }
+    if (result.test_plan.metadata.suggested_folder) {
+      const folderName = result.test_plan.metadata.suggested_folder.name || result.test_plan.metadata.suggested_folder;
+      console.log(chalk.cyan(`📁 Suggested Folder: ${folderName}`));
+    }
+    if (result.test_plan.metadata.execution_time_seconds !== undefined) {
+      console.log(chalk.cyan(`⏱️  Execution Time: ${result.test_plan.metadata.execution_time_seconds.toFixed(2)}s`));
+    }
+    if (result.test_plan.metadata.ai_model) {
+      console.log(chalk.cyan(`🤖 AI Model: ${result.test_plan.metadata.ai_model}`));
     }
   }
 
@@ -80,7 +88,7 @@ async function handleGenerate(storyKey, upload) {
   console.log('\n' + chalk.yellow('Generated Test Cases:'));
   console.log(chalk.yellow('='.repeat(80)));
 
-  result.test_cases.forEach((testCase, index) => {
+  result.test_plan.test_cases.forEach((testCase, index) => {
     console.log(`\n${chalk.cyan(`${index + 1}. ${testCase.title}`)}`);
     console.log(`   Priority: ${testCase.priority} | Type: ${testCase.test_type}`);
     console.log(`   Description: ${testCase.description}`);
@@ -88,9 +96,9 @@ async function handleGenerate(storyKey, upload) {
   });
 
   // Print Zephyr IDs if uploaded
-  if (upload && result.zephyr_ids && result.zephyr_ids.length > 0) {
+  if (upload && result.zephyr_results && result.zephyr_results.zephyr_ids && result.zephyr_results.zephyr_ids.length > 0) {
     console.log('\n' + chalk.green('✅ Uploaded to Zephyr:'));
-    result.zephyr_ids.forEach((id, index) => {
+    result.zephyr_results.zephyr_ids.forEach((id, index) => {
       console.log(`   ${index + 1}. ${id}`);
     });
   }
